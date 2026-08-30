@@ -10,7 +10,6 @@ import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.SlotItemHandler;
-import org.jetbrains.annotations.Nullable;
 import org.nic.hardestworkbench.block.BlockEntities.CrudeWorkbenchBlockEntity;
 import org.nic.hardestworkbench.block.ModBlocks;
 
@@ -24,35 +23,26 @@ public class CrudeWorkbenchMenu extends AbstractContainerMenu {
 
     public CrudeWorkbenchMenu(int pContainerId, Inventory inv, BlockEntity entity){
         super(ModMenuTypes.CRUDE_WORKBENCH_MENU.get(), pContainerId);
-        checkContainerSize(inv, 12);
+        checkContainerSize(inv, CrudeWorkbenchBlockEntity.SLOT_COUNT);
         blockEntity = ((CrudeWorkbenchBlockEntity) entity);
         this.level = inv.player.level();
 
         addPlayerInventory(inv);
         addPlayerHotbar(inv);
 
-        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(this::addCraftingGrid);
+        this.blockEntity.getCapability(ForgeCapabilities.ITEM_HANDLER).ifPresent(iItemHandler -> {
+            addCraftingGrid(iItemHandler);
+            this.addSlot(new SlotItemHandler(iItemHandler, CrudeWorkbenchBlockEntity.OUTPUT_SLOT, 124, 35));
+        });
 
     }
 
-    // TODO: Licensing?? That code is LGPLv3
-    // CREDIT GOES TO: diesieben07 | https://github.com/diesieben07/SevenCommons
-    // must assign a slot number to each of the slots used by the GUI.
-    // For this container, we can see both the tile inventory's slots as well as the player inventory slots and the hotbar.
-    // Each time we add a Slot to the container, it automatically increases the slotIndex, which means
-    //  0 - 8 = hotbar slots (which will map to the InventoryPlayer slot numbers 0 - 8)
-    //  9 - 35 = player inventory slots (which map to the InventoryPlayer slot numbers 9 - 35)
-    //  36 - 44 = TileInventory slots, which map to our TileEntity slot numbers 0 - 8)
     private static final int HOTBAR_SLOT_COUNT = 9;
-    private static final int PLAYER_INVENTORY_ROW_COUNT = 3;
-    private static final int PLAYER_INVENTORY_COLUMN_COUNT = 9;
-    private static final int PLAYER_INVENTORY_SLOT_COUNT = PLAYER_INVENTORY_COLUMN_COUNT * PLAYER_INVENTORY_ROW_COUNT;
+    private static final int PLAYER_INVENTORY_SLOT_COUNT = 27;
     private static final int VANILLA_SLOT_COUNT = HOTBAR_SLOT_COUNT + PLAYER_INVENTORY_SLOT_COUNT;
-    private static final int VANILLA_FIRST_SLOT_INDEX = 0;
-    private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT;
+    private static final int TE_INVENTORY_FIRST_SLOT_INDEX = VANILLA_SLOT_COUNT;
 
-    // THIS YOU HAVE TO DEFINE!
-    private static final int TE_INVENTORY_SLOT_COUNT = 9;  // must be the number of slots you have!
+    private static final int TE_INVENTORY_SLOT_COUNT = 9;
     @Override
     public ItemStack quickMoveStack(Player playerIn, int pIndex) {
         Slot sourceSlot = slots.get(pIndex);
@@ -61,7 +51,7 @@ public class CrudeWorkbenchMenu extends AbstractContainerMenu {
         ItemStack copyOfSourceStack = sourceStack.copy();
 
         // Check if the slot clicked is one of the vanilla container slots
-        if (pIndex < VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT) {
+        if (pIndex < VANILLA_SLOT_COUNT) {
             // This is a vanilla container slot so merge the stack into the tile inventory
             if (!moveItemStackTo(sourceStack, TE_INVENTORY_FIRST_SLOT_INDEX, TE_INVENTORY_FIRST_SLOT_INDEX
                     + TE_INVENTORY_SLOT_COUNT, false)) {
@@ -69,7 +59,7 @@ public class CrudeWorkbenchMenu extends AbstractContainerMenu {
             }
         } else if (pIndex < TE_INVENTORY_FIRST_SLOT_INDEX + TE_INVENTORY_SLOT_COUNT) {
             // This is a TE slot so merge the stack into the players inventory
-            if (!moveItemStackTo(sourceStack, VANILLA_FIRST_SLOT_INDEX, VANILLA_FIRST_SLOT_INDEX + VANILLA_SLOT_COUNT, false)) {
+            if (!moveItemStackTo(sourceStack, 0, VANILLA_SLOT_COUNT, false)) {
                 return ItemStack.EMPTY;
             }
         } else {
@@ -95,7 +85,7 @@ public class CrudeWorkbenchMenu extends AbstractContainerMenu {
     private void addCraftingGrid(IItemHandler inv){
         for (int i = 0; i < 3; ++i) {
             for (int l = 0; l < 3; ++l) {
-                this.addSlot(new SlotItemHandler(inv, l + i * 3, 8 + l * 18, 8 + i * 18));
+                this.addSlot(new SlotItemHandler(inv, l + i * 3, 30 + l * 18, 17 + i * 18));
             }
         }
     }

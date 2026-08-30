@@ -24,11 +24,17 @@ import org.jetbrains.annotations.Nullable;
 import org.nic.hardestworkbench.screen.CrudeWorkbenchMenu;
 
 public class CrudeWorkbenchBlockEntity extends BlockEntity implements MenuProvider {
-    private final ItemStackHandler itemHandler = new ItemStackHandler(12);
 
-    private static final int HAMMER_SLOT = 9;
-    private static final int CHISEL_SLOT = 10;
-    private static final int FILE_SLOT = 11;
+    public static final int SLOT_COUNT = 13;
+
+    public static final int OUTPUT_SLOT = 9;
+    private static final int HAMMER_SLOT = 10;
+    private static final int CHISEL_SLOT = 12;
+    private static final int FILE_SLOT = 12;
+
+    private final ItemStackHandler itemHandler = new ItemStackHandler(SLOT_COUNT);
+
+
 
     private LazyOptional<IItemHandler> lazyItemHandler = LazyOptional.empty();
 
