@@ -26,6 +26,8 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.nic.hardestworkbench.block.ModBlocks;
+import org.nic.hardestworkbench.item.ModItems;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -40,6 +42,9 @@ public class HardestWorkbench
     public HardestWorkbench(FMLJavaModLoadingContext context)
     {
         IEventBus modEventBus = context.getModEventBus();
+
+        ModItems.register(modEventBus);
+        ModBlocks.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -61,6 +66,17 @@ public class HardestWorkbench
     // Add the example block item to the building blocks tab
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
+        if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
+            //event.accept(ModItems.CRUDE_HAMMER);
+            event.accept(ModItems.CRUDE_CHISEL);
+            event.accept(ModItems.CRUDE_FILE);
+        }
+        else if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
+            event.accept(ModBlocks.CRUDE_WORKBENCH);
+        }
+        else if (event.getTabKey() == CreativeModeTabs.SEARCH) {
+            event.accept(ModItems.CRUDE_HAMMER);
+        }
     }
 
     // You can use SubscribeEvent and let the Event Bus discover methods to call

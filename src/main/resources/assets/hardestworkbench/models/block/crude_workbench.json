@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "hardestworkbench:block/crude_workbench"
+  }
+}
