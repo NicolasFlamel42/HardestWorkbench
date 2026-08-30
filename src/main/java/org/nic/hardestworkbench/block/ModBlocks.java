@@ -19,7 +19,7 @@ public class ModBlocks {
             DeferredRegister.create(ForgeRegistries.BLOCKS, HardestWorkbench.MOD_ID);
 
     public static final RegistryObject<Block> CRUDE_WORKBENCH = registerBlock("crude_workbench",
-            () -> new Block((BlockBehaviour.Properties.copy(Blocks.CRAFTING_TABLE))));
+            () -> new CrudeWorkbench((BlockBehaviour.Properties.copy(Blocks.CRAFTING_TABLE).noOcclusion())));
 
 
     private static <T extends Block> RegistryObject<T> registerBlock(String name, Supplier<T> block){

@@ -2,6 +2,7 @@ package org.nic.hardestworkbench;
 
 import com.mojang.logging.LogUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.screens.MenuScreens;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.world.food.FoodProperties;
 import net.minecraft.world.item.BlockItem;
@@ -26,8 +27,11 @@ import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import net.minecraftforge.registries.RegistryObject;
+import org.nic.hardestworkbench.block.BlockEntities.ModBlockEntities;
 import org.nic.hardestworkbench.block.ModBlocks;
 import org.nic.hardestworkbench.item.ModItems;
+import org.nic.hardestworkbench.screen.CrudeWorkbenchScreen;
+import org.nic.hardestworkbench.screen.ModMenuTypes;
 import org.slf4j.Logger;
 
 // The value here should match an entry in the META-INF/mods.toml file
@@ -45,6 +49,8 @@ public class HardestWorkbench
 
         ModItems.register(modEventBus);
         ModBlocks.register(modEventBus);
+        ModBlockEntities.register(modEventBus);
+        ModMenuTypes.register(modEventBus);
 
         // Register the commonSetup method for modloading
         modEventBus.addListener(this::commonSetup);
@@ -67,15 +73,12 @@ public class HardestWorkbench
     private void addCreative(BuildCreativeModeTabContentsEvent event)
     {
         if(event.getTabKey() == CreativeModeTabs.INGREDIENTS) {
-            //event.accept(ModItems.CRUDE_HAMMER);
+            event.accept(ModItems.CRUDE_HAMMER);
             event.accept(ModItems.CRUDE_CHISEL);
             event.accept(ModItems.CRUDE_FILE);
         }
         else if (event.getTabKey() == CreativeModeTabs.FUNCTIONAL_BLOCKS) {
             event.accept(ModBlocks.CRUDE_WORKBENCH);
-        }
-        else if (event.getTabKey() == CreativeModeTabs.SEARCH) {
-            event.accept(ModItems.CRUDE_HAMMER);
         }
     }
 
@@ -92,6 +95,7 @@ public class HardestWorkbench
         @SubscribeEvent
         public static void onClientSetup(FMLClientSetupEvent event)
         {
+            MenuScreens.register(ModMenuTypes.CRUDE_WORKBENCH_MENU.get(), CrudeWorkbenchScreen::new);
         }
     }
 }
